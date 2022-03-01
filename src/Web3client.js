@@ -4,6 +4,8 @@ let selectedAccount;
 
 let erc20Contract;
 
+let erc20ContractPool;
+
 let isInitialized = false;
 
 export const init = () => {
@@ -44,11 +46,48 @@ export const init = () => {
       stateMutability: "view",
       type: "function",
     },
+    {
+      constant: true,
+      inputs: [],
+      name: "totalBurn",
+      outputs: [
+        {
+          name: "",
+          type: "uint256",
+        },
+      ],
+      payable: false,
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      constant: true,
+      inputs: [
+        {
+          name: "_owner",
+          type: "address",
+        },
+      ],
+      name: "balanceOf",
+      outputs: [
+        {
+          name: "balance",
+          type: "uint256",
+        },
+      ],
+      payable: false,
+      stateMutability: "view",
+      type: "function",
+    },
   ];
 
   erc20Contract = new web3.eth.Contract(
     erc20Abi,
-    "0x440aBbf18c54b2782A4917b80a1746d3A2c2Cce1"
+    "0x45CdaF3Fd17BD31d9830Fa977159162DD2431683"
+  );
+  erc20ContractPool = new web3.eth.Contract(
+    erc20Abi,
+    "0xf3f119ceb9a59e15dfc9d4989df39ac076d2796b"
   );
 
   isInitialized = true;
@@ -60,4 +99,22 @@ export const getTotalSupply = async () => {
   }
 
   return erc20Contract.methods.totalSupply().call();
+};
+
+export const getTotalBurn = async () => {
+  if (!isInitialized) {
+    await init();
+  }
+
+  return erc20Contract.methods.totalBurn().call();
+};
+
+export const getLiquidityTJ = async () => {
+  if (!isInitialized) {
+    await init();
+  }
+
+  return erc20ContractPool.methods
+    .balanceOf(0xf3f119ceb9a59e15dfc9d4989df39ac076d2796b)
+    .call();
 };
