@@ -79,6 +79,17 @@ export const init = () => {
       stateMutability: "view",
       type: "function",
     },
+    {
+      inputs: [],
+      name: "getReserves",
+      outputs: [
+        { internalType: "uint112", name: "_reserve0", type: "uint112" },
+        { internalType: "uint112", name: "_reserve1", type: "uint112" },
+        { internalType: "uint32", name: "_blockTimestampLast", type: "uint32" },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
   ];
 
   erc20Contract = new web3.eth.Contract(
@@ -87,10 +98,28 @@ export const init = () => {
   );
   erc20ContractPool = new web3.eth.Contract(
     erc20Abi,
-    "0xf3f119ceb9a59e15dfc9d4989df39ac076d2796b"
+    "0xf3F119cEb9A59e15DfC9D4989Df39ac076D2796b"
   );
 
   isInitialized = true;
+};
+
+// wavax contract 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7
+
+export const getLiquidityTJ = async () => {
+  if (!isInitialized) {
+    await init();
+  }
+
+  return erc20ContractPool.methods
+    .getReserves()
+    .call()
+    .then((pool) => {
+      return [
+        Web3.utils.fromWei(pool._reserve0),
+        Web3.utils.fromWei(pool._reserve1),
+      ];
+    });
 };
 
 export const getTotalSupply = async () => {
@@ -107,14 +136,4 @@ export const getTotalBurn = async () => {
   }
 
   return erc20Contract.methods.totalBurn().call();
-};
-
-export const getLiquidityTJ = async () => {
-  if (!isInitialized) {
-    await init();
-  }
-
-  return erc20ContractPool.methods
-    .balanceOf(0xf3f119ceb9a59e15dfc9d4989df39ac076d2796b)
-    .call();
 };

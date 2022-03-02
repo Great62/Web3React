@@ -7,14 +7,11 @@ import {
   getLiquidityTJ,
 } from "./Web3client";
 
-let erc20Contract;
-
 function App() {
-  const providerUrl = process.env.PROVIDER_URL;
-
   const [TotalSupply, setTotalSupply] = useState(0);
   const [TotalBurn, setTotalBurn] = useState(0);
-  const [poolLiuqidity, setpoolLiquidity] = useState(0);
+  const [poolLiquidity1, setpoolLiquidity1] = useState([]);
+  const [poolLiquidity2, setpoolLiquidity2] = useState([]);
 
   useEffect(() => {
     init();
@@ -38,10 +35,12 @@ function App() {
         console.log(err);
       }),
   ];
-  const fetchTotalPoolLiuqidity = () => [
+  const fetchTotalPoolLiquidity = () => [
     getLiquidityTJ()
-      .then((poolLiuqidity) => {
-        setpoolLiquidity(poolLiuqidity);
+      .then((poolLiquidity) => {
+        setpoolLiquidity1(poolLiquidity[0]);
+        setpoolLiquidity2(poolLiquidity[1]);
+        console.log(poolLiquidity);
       })
       .catch((err) => {
         console.log(err);
@@ -56,8 +55,11 @@ function App() {
       <button onClick={fetchTotalBurn}>refresh</button>
       <div>The total burn is {TotalBurn * 3} </div>
       <button onClick={fetchTotalBurn}>refresh</button>
-      <div>The total traderJoe liqui is {poolLiuqidity} </div>
-      <button onClick={fetchTotalPoolLiuqidity}>refresh</button>
+      <div>
+        The total traderJoe liqui for the kioo token is {poolLiquidity1} and the
+        wavax {poolLiquidity2}{" "}
+      </div>
+      <button onClick={fetchTotalPoolLiquidity}>refresh</button>
     </div>
   );
 }
